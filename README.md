@@ -1,2 +1,2 @@
-# dnd-frontend
+# dashboard-frontend
 Reusable drag and drop UI layout for frontends
