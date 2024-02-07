@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: dashboard-frontend
+objects:
+  - apiVersion: cloud.redhat.com/v1alpha1
+    kind: Frontend
+    metadata:
+      name: dashboard-frontend
+    spec:
+      envName: ${ENV_NAME}
+      title: dashboard-frontend
+      deploymentRepo: TBD
+      frontend:
+        paths:
+          - /apps/dashboard-frontend
+      image: ${IMAGE}:${IMAGE_TAG}
+      navItems: 
+      - appId: dashboard-frontend
+        title: dashboard-frontend
+        href: "/staging/dashboard-frontend"
+      module:
+        manifestLocation: "/apps/dashboard-frontend/fed-mods.json"
+        modules:
+          - id: "dashboard-frontend"
+            module: "./RootApp"
+            routes: 
+            - pathname: "/staging/dashboard-frontend"
+
+parameters:
+  - name: ENV_NAME
+    required: true
+  - name: IMAGE_TAG
+    required: true
+  - name: IMAGE
+    value: TBD
