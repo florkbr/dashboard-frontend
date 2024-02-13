@@ -2,12 +2,13 @@ import { Button, Card, CardHeader, CardTitle, Gallery, GalleryItem, Icon, Level,
 import { useAtom, useSetAtom } from 'jotai';
 import React from 'react';
 import { drawerExpandedAtom } from '../../state/drawerExpandedAtom';
-import { CloseIcon, GripVerticalIcon, PlusIcon } from '@patternfly/react-icons';
+import { CloseIcon, GripVerticalIcon } from '@patternfly/react-icons';
 import LargeWidget from '../Widgets/LargeWidget';
 import { WidgetTypes } from '../Widgets/widgetTypes';
 import { currentDropInItemAtom } from '../../state/currentDropInItemAtom';
 import MediumWidget from '../Widgets/MediumWidget';
 import SmallWidget from '../Widgets/SmallWidget';
+import { lockedLayoutAtom } from '../../state/lockedLayoutAtom';
 
 export type AddWidgetDrawerProps = React.PropsWithChildren<{
   dismissible?: boolean;
@@ -49,7 +50,9 @@ const WidgetWrapper = ({ title, widgetType }: React.PropsWithChildren<{ title: s
 };
 
 const AddWidgetDrawer = ({ children }: AddWidgetDrawerProps) => {
-  const [isExpanded, setIsExpanded] = useAtom(drawerExpandedAtom);
+  const [isOpen, toggleOpen] = useAtom(drawerExpandedAtom);
+  const toggleLocked = useSetAtom(lockedLayoutAtom);
+
   const panelContent = (
     <div
       style={{
@@ -59,12 +62,19 @@ const AddWidgetDrawer = ({ children }: AddWidgetDrawerProps) => {
       <Level className="pf-v5-u-p-md">
         <LevelItem>
           <Title headingLevel="h2" size="md">
-            <PlusIcon className="pf-v5-u-mr-sm" />
-            Add widgets
+            Add new and previously removed widgets by clicking the <GripVerticalIcon /> icon, then drag and drop to a new location. Drag the corners
+            of the cards to resize widgets.
           </Title>
         </LevelItem>
         <LevelItem>
-          <Button variant="plain" onClick={() => setIsExpanded(false)} icon={<CloseIcon />} />
+          <Button
+            variant="plain"
+            onClick={() => {
+              toggleOpen((prev) => !prev);
+              toggleLocked((prev) => !prev);
+            }}
+            icon={<CloseIcon />}
+          />
         </LevelItem>
       </Level>
       <Gallery hasGutter className="pf-v5-u-p-md">
@@ -88,7 +98,7 @@ const AddWidgetDrawer = ({ children }: AddWidgetDrawerProps) => {
   );
   return (
     <>
-      {isExpanded ? <div>{panelContent}</div> : null}
+      {isOpen ? <div>{panelContent}</div> : null}
       {children}
     </>
   );

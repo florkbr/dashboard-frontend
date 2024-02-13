@@ -2,6 +2,7 @@ const path = require('path');
 
 module.exports = {
   appUrl: ['/staging/dashboard-frontend'],
+  sassPrefix: '.dashboardFrontend',
   debug: true,
   useProxy: true,
   proxyVerbose: true,
@@ -25,9 +26,11 @@ module.exports = {
     exposes: {
       './RootApp': path.resolve(__dirname, './src/AppEntry.tsx'),
     },
+    exclude: ['react-router-dom', 'jotai'],
     shared: [
       {
         'react-router-dom': { singleton: true, requiredVersion: '*' },
+        jotai: { singleton: true, requiredVersion: '*' },
       },
     ],
   },

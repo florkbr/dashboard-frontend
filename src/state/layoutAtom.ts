@@ -1,9 +1,9 @@
-import { atom } from 'jotai';
+import { atomWithLocalStorage } from './localStorageHelperAtom';
 import { ExtendedLayoutItem } from '../Components/DnDLayout/GridTile';
 import { WidgetTypes } from '../Components/Widgets/widgetTypes';
 import { widgetDefaultHeight, widgetDefaultWidth, widgetMaxHeight, widgetMinHeight } from '../Components/Widgets/widgetDefaults';
 
-const initialLayout = [
+export const initialLayout = [
   { title: 'Widget 1', i: 'LargeWidget#lw1', x: 0, y: 0 },
   { title: 'Widget 1', i: 'LargeWidget#lw2', x: 0, y: 1 },
   { title: 'Widget 1', i: 'LargeWidget#lw3', x: 0, y: 2 },
@@ -28,6 +28,6 @@ function getWidgetDefaultSettings(id: string): [WidgetTypes, string] {
   return [widgetType as WidgetTypes, i];
 }
 
-export const layoutAtom = atom<ExtendedLayoutItem[]>(initialLayout);
+export const layoutAtom = atomWithLocalStorage<ExtendedLayoutItem[]>('insights-layout', initialLayout);
 
-export const prevLayoutAtom = atom<ExtendedLayoutItem[]>(initialLayout);
+export const prevLayoutAtom = atomWithLocalStorage<ExtendedLayoutItem[]>('insights-prev-layout', initialLayout);

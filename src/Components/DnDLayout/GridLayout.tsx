@@ -1,4 +1,5 @@
-import ReactGridLayout, { ReactGridLayoutProps } from 'react-grid-layout';
+import { ReactGridLayoutProps, Responsive, WidthProvider } from 'react-grid-layout';
+
 import 'react-grid-layout/css/styles.css';
 
 import './GridLayout.css';
@@ -10,6 +11,8 @@ import { atom, useAtom, useAtomValue } from 'jotai';
 import { currentDropInItemAtom } from '../../state/currentDropInItemAtom';
 import { layoutAtom } from '../../state/layoutAtom';
 import React from 'react';
+
+const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const activeItemAtom = atom<string | undefined>(undefined);
 
@@ -189,12 +192,14 @@ const GridLayout = ({ isLocked = false }: { isLocked?: boolean }) => {
     // {/* relative position is required for the grid layout to properly calculate
     // child translation while dragging is in progress */}
     <div style={{ position: 'relative' }} ref={layoutRef}>
-      <ReactGridLayout
+      <ResponsiveGridLayout
         className="layout"
         draggableHandle=".drag-handle"
-        layout={activeLayout}
+        layouts={{ lg: activeLayout }}
         // autoSize={isLocked}
-        cols={4}
+        // cols={4}
+        breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+        cols={{ lg: 5, md: 4, sm: 3, xs: 2, xxs: 1 }}
         rowHeight={88}
         width={1200}
         isDraggable={!isLocked}
@@ -241,7 +246,7 @@ const GridLayout = ({ isLocked = false }: { isLocked?: boolean }) => {
             </div>
           ))
         }
-      </ReactGridLayout>
+      </ResponsiveGridLayout>
     </div>
   );
 };
