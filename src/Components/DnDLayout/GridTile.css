@@ -10,6 +10,6 @@
   position: relative;
   height: 100%;
   .pf-v5-c-card__body {
-    overflow: scroll;
+    overflow-y: scroll;
   }
 }

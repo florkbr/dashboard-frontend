@@ -11,6 +11,8 @@ import { useLastVisited } from '@redhat-cloud-services/chrome';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { Link } from 'react-router-dom';
 
+import HistoryIcon from '@patternfly/react-icons/dist/js/icons/history-icon';
+
 const LinkWrapper = ({
   pathname,
   title,
@@ -30,10 +32,10 @@ const RecentlyVisited = () => {
   const lastVisited = useLastVisited();
   const lastVisitedData = lastVisited.slice(0, 10);
   return (
-    <Gallery className="pf-m-gutter"
+    <Gallery
       hasGutter
       maxWidths={{
-        default: '250px',
+        default: '300px',
       }}
     >
       {lastVisitedData.map(({ bundle, pathname, title }, index) => (
