@@ -20,6 +20,8 @@ import { Layout } from 'react-grid-layout';
 import { WidgetTypes } from '../Widgets/widgetTypes';
 import widgetMapper from '../Widgets/widgetMapper';
 
+import RecentlyVisited from '../recently-visited/recently-visited';
+
 export type ExtendedLayoutItem = Layout & {
   widgetType: WidgetTypes;
   title: string;
@@ -145,7 +147,9 @@ const GridTile = ({ widgetType, title, isDragging, setIsDragging, setWidgetAttri
         </CardTitle>
       </CardHeader>
       <CardBody>
-        <Component></Component>
+        <Component>
+          <RecentlyVisited />
+        </Component>
       </CardBody>
     </Card>
   );
