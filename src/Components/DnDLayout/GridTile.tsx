@@ -20,6 +20,9 @@ import { Layout } from 'react-grid-layout';
 import { WidgetTypes } from '../Widgets/widgetTypes';
 import widgetMapper from '../Widgets/widgetMapper';
 
+import RecentlyVisited from '../recently-visited/recently-visited';
+import HistoryIcon from '@patternfly/react-icons/dist/js/icons/history-icon';
+
 export type ExtendedLayoutItem = Layout & {
   widgetType: WidgetTypes;
   title: string;
@@ -141,11 +144,14 @@ const GridTile = ({ widgetType, title, isDragging, setIsDragging, setWidgetAttri
             textOverflow: 'ellipsis',
           }}
         >
-          {title}
+          {/*{title}*/}
+          <HistoryIcon/> Recently visited
         </CardTitle>
       </CardHeader>
       <CardBody>
-        <Component></Component>
+        <Component>
+          <RecentlyVisited />
+        </Component>
       </CardBody>
     </Card>
   );
