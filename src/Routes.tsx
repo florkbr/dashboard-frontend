@@ -4,7 +4,7 @@ import { Routes as DomRoutes, Route } from 'react-router-dom';
 // eslint-disable-next-line rulesdir/forbid-pf-relative-imports
 import { Bullseye, Spinner } from '@patternfly/react-core';
 
-const Default = lazy(() => import(/* webpackChunkName: "DefaultLocked" */ './Routes/Default/Default'));
+const Default = lazy(() => import(/* webpackChunkName: "DefaultRoute" */ './Routes/Default/Default'));
 const NotFound = lazy(() => import(/* webpackCunkName: "NotFound" */ './Routes/404/404'));
 
 const Routes = () => (

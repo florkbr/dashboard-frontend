@@ -1,8 +1,9 @@
 import { ReactGridLayoutProps, Responsive, WidthProvider } from 'react-grid-layout';
 
 import 'react-grid-layout/css/styles.css';
+import ResizeHandleIcon from './resize-handle.svg';
 
-import './GridLayout.css';
+import './GridLayout.scss';
 import GridTile, { ExtendedLayoutItem, SetWidgetAttribute } from './GridTile';
 import { KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { WidgetTypes } from '../Widgets/widgetTypes';
@@ -20,7 +21,15 @@ function isWidgetType(type: string): type is WidgetTypes {
   return Object.values(WidgetTypes).includes(type as WidgetTypes);
 }
 
-const GridLayout = ({ isLocked = false }: { isLocked?: boolean }) => {
+const getResizeHandle = (resizeHandleAxis: string, ref: React.Ref<HTMLDivElement>) => {
+  return (
+    <div ref={ref} className={`react-resizable-handle react-resizable-handle-${resizeHandleAxis}`}>
+      <img src={ResizeHandleIcon} />
+    </div>
+  );
+};
+
+const GridLayout = ({ isLayoutLocked = false }: { isLayoutLocked?: boolean }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [layout, setLayout] = useAtom(layoutAtom);
   const [activeItem, setActiveItem] = useAtom(activeItemAtom);
@@ -88,9 +97,9 @@ const GridLayout = ({ isLocked = false }: { isLocked?: boolean }) => {
     () =>
       layout.map((item) => ({
         ...item,
-        locked: isLocked,
+        locked: isLayoutLocked ? isLayoutLocked : item.locked,
       })),
-    [isLocked, layout]
+    [isLayoutLocked, layout]
   );
 
   const handleKeyboard = (event: KeyboardEvent<HTMLDivElement>, id: string) => {
@@ -202,17 +211,18 @@ const GridLayout = ({ isLocked = false }: { isLocked?: boolean }) => {
         cols={{ lg: 5, md: 4, sm: 3, xs: 2, xxs: 1 }}
         rowHeight={88}
         width={1200}
-        isDraggable={!isLocked}
-        isResizable={!isLocked}
-        resizeHandles={['se']}
+        isDraggable={!isLayoutLocked}
+        isResizable={!isLayoutLocked}
+        resizeHandle={getResizeHandle}
+        resizeHandles={['sw', 'nw', 'se', 'ne']}
         // add droppping item default based on dragged template
         droppingItem={droppingItemTemplate}
-        isDroppable={!isLocked}
+        isDroppable={!isLayoutLocked}
         onDrop={onDrop}
         useCSSTransforms
         verticalCompact
         onLayoutChange={(newLayout: ExtendedLayoutItem[]) => {
-          if (isLocked) {
+          if (isLayoutLocked) {
             return;
           }
           setLayout(newLayout.filter(({ i }) => i !== '__dropping-elem__'));

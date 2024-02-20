@@ -8,7 +8,6 @@ import { WidgetTypes } from '../Widgets/widgetTypes';
 import { currentDropInItemAtom } from '../../state/currentDropInItemAtom';
 import MediumWidget from '../Widgets/MediumWidget';
 import SmallWidget from '../Widgets/SmallWidget';
-import { lockedLayoutAtom } from '../../state/lockedLayoutAtom';
 
 export type AddWidgetDrawerProps = React.PropsWithChildren<{
   dismissible?: boolean;
@@ -51,7 +50,6 @@ const WidgetWrapper = ({ title, widgetType }: React.PropsWithChildren<{ title: s
 
 const AddWidgetDrawer = ({ children }: AddWidgetDrawerProps) => {
   const [isOpen, toggleOpen] = useAtom(drawerExpandedAtom);
-  const toggleLocked = useSetAtom(lockedLayoutAtom);
 
   const panelContent = (
     <div
@@ -71,7 +69,6 @@ const AddWidgetDrawer = ({ children }: AddWidgetDrawerProps) => {
             variant="plain"
             onClick={() => {
               toggleOpen((prev) => !prev);
-              toggleLocked((prev) => !prev);
             }}
             icon={<CloseIcon />}
           />

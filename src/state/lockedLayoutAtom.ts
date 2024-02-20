@@ -1,3 +1,3 @@
 import { atom } from 'jotai';
 
-export const lockedLayoutAtom = atom(true);
+export const lockedLayoutAtom = atom(false);

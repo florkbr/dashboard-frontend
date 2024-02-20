@@ -6,18 +6,18 @@ import { lockedLayoutAtom } from '../../state/lockedLayoutAtom';
 import Header from '../../Components/Header/Header';
 import React from 'react';
 
-const DefaultLocked = () => {
-  const isLocked = useAtomValue(lockedLayoutAtom);
+const DefaultRoute = () => {
+  const isLayoutLocked = useAtomValue(lockedLayoutAtom);
   return (
     <>
       <Header />
       <AddWidgetDrawer dismissible={false}>
         <PageSection>
-          <GridLayout isLocked={isLocked} />
+          <GridLayout isLayoutLocked={isLayoutLocked} />
         </PageSection>
       </AddWidgetDrawer>
     </>
   );
 };
 
-export default DefaultLocked;
+export default DefaultRoute;

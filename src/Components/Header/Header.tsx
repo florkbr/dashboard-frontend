@@ -1,7 +1,6 @@
 import './Header.scss';
 
 import {
-  ActionGroup,
   Button,
   ButtonType,
   ClipboardCopy,
@@ -10,6 +9,7 @@ import {
   DropdownItem,
   DropdownList,
   Form,
+  FormGroup,
   FormHelperText,
   HelperText,
   HelperTextItem,
@@ -33,20 +33,20 @@ import { CheckIcon, ExclamationCircleIcon, PlusIcon, TimesIcon } from '@patternf
 import React from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { drawerExpandedAtom } from '../../state/drawerExpandedAtom';
-import { lockedLayoutAtom } from '../../state/lockedLayoutAtom';
-import { initialLayout, layoutAtom, prevLayoutAtom } from '../../state/layoutAtom';
+import { initialLayout, isDefaultLayout, layoutAtom, prevLayoutAtom } from '../../state/layoutAtom';
 import useCurrentUser from '../../hooks/useCurrentUser';
 
 const Controls = () => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [customValue, setCustomValue] = React.useState('');
   const [customValueValidationError, setCustomValueValidationError] = React.useState('');
-  const [checked, setChecked] = React.useState('console-default');
-  const toggleLocked = useSetAtom(lockedLayoutAtom);
   const toggleOpen = useSetAtom(drawerExpandedAtom);
   const setPrevLayout = useSetAtom(prevLayoutAtom);
   const setLayout = useSetAtom(layoutAtom);
   const layout = useAtomValue(layoutAtom);
+  const CONSOLE_DEFAULT = 'console-default';
+  const CUSTOM = 'custom';
+  const [checked, setChecked] = React.useState(isDefaultLayout(layout) ? CONSOLE_DEFAULT : CUSTOM);
 
   const onToggleClick = () => {
     setIsOpen(!isOpen);
@@ -58,14 +58,27 @@ const Controls = () => {
       setCustomValueValidationError('Input value is required.');
       return;
     }
-    setLayout(JSON.parse(customValue));
-    setIsOpen(false);
+    try {
+      const layout = JSON.parse(customValue);
+      if (isDefaultLayout(layout)) {
+        setChecked(CONSOLE_DEFAULT);
+      }
+      setLayout(layout);
+      setIsOpen(false);
+      setCustomValue('');
+    } catch (e) {
+      console.error(e);
+      setCustomValueValidationError('Invalid input value.');
+      return;
+    }
   };
 
   const onDefaultConfigSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
+    setChecked(CONSOLE_DEFAULT);
     setLayout(initialLayout);
     setIsOpen(false);
+    setCustomValue('');
   };
 
   return (
@@ -81,7 +94,11 @@ const Controls = () => {
             <Dropdown
               isOpen={isOpen}
               activeItemId={0}
-              onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
+              onOpenChange={(isOpen: boolean) => {
+                setIsOpen(isOpen);
+                setChecked(isDefaultLayout(layout) ? CONSOLE_DEFAULT : CUSTOM);
+                setCustomValueValidationError('');
+              }}
               toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
                 <MenuToggle ref={toggleRef} onClick={onToggleClick} isExpanded={isOpen}>
                   Config view: {checked}
@@ -91,60 +108,71 @@ const Controls = () => {
               <DropdownGroup label="Dashboard configuration" labelHeadingLevel="h3">
                 <DropdownList>
                   <Form>
-                    <DropdownItem>
-                      <Radio
-                        name="config"
-                        id="default"
-                        label="console-default"
-                        value="console-default"
-                        onClick={(e) => {
-                          onToggleClick();
-                          setChecked('console-default');
-                          onDefaultConfigSubmit(e);
-                        }}
-                        checked={checked === 'console-default'}
-                      ></Radio>
-                    </DropdownItem>
-                    <DropdownItem>
-                      <Radio
-                        name="config"
-                        id="custom"
-                        label="Custom configuration"
-                        value="custom"
-                        onClick={() => {
-                          setChecked('custom');
-                        }}
-                        checked={checked === 'custom'}
-                      ></Radio>
-                      <TextArea
-                        placeholder="Paste custom string"
-                        required
-                        onClick={() => {
-                          setChecked('custom');
-                        }}
-                        onChange={(_event, value) => {
-                          setCustomValue(value);
-                        }}
-                      ></TextArea>
-                      <FormHelperText>
-                        <HelperText>
-                          <HelperTextItem
-                            variant={customValueValidationError ? 'error' : 'default'}
-                            {...(customValueValidationError && { icon: <ExclamationCircleIcon /> })}
+                    <FormGroup>
+                      <DropdownItem>
+                        <Radio
+                          name="config"
+                          id={CONSOLE_DEFAULT}
+                          label={CONSOLE_DEFAULT}
+                          value={CONSOLE_DEFAULT}
+                          onClick={(e) => {
+                            onToggleClick();
+                            setCustomValueValidationError('');
+                            setChecked(CONSOLE_DEFAULT);
+                            onDefaultConfigSubmit(e);
+                          }}
+                          checked={checked === CONSOLE_DEFAULT}
+                        ></Radio>
+                      </DropdownItem>
+                      <DropdownItem>
+                        <Radio
+                          name="config"
+                          id={CUSTOM}
+                          label="Custom configuration"
+                          value={CUSTOM}
+                          onClick={() => {
+                            setChecked(CUSTOM);
+                          }}
+                          checked={checked === CUSTOM}
+                        ></Radio>
+                        <TextArea
+                          placeholder="Paste custom string"
+                          required
+                          onClick={() => {
+                            setChecked(CUSTOM);
+                          }}
+                          onChange={(_event, value) => {
+                            setCustomValue(value);
+                          }}
+                        ></TextArea>
+                        <FormHelperText>
+                          <HelperText>
+                            <HelperTextItem
+                              variant={customValueValidationError ? 'error' : 'default'}
+                              {...(customValueValidationError && { icon: <ExclamationCircleIcon /> })}
+                            >
+                              {customValueValidationError}
+                            </HelperTextItem>
+                          </HelperText>
+                        </FormHelperText>
+                        <div hidden={checked !== CUSTOM}>
+                          <Button variant="plain" type={ButtonType.submit} onClick={onCustomConfigSubmit}>
+                            <CheckIcon />
+                          </Button>
+                          <Button
+                            variant="plain"
+                            type={ButtonType.reset}
+                            onClick={() => {
+                              setIsOpen(false);
+                              setChecked(isDefaultLayout(layout) ? CONSOLE_DEFAULT : CUSTOM);
+                              setCustomValueValidationError('');
+                            }}
                           >
-                            {customValueValidationError}
-                          </HelperTextItem>
-                        </HelperText>
-                      </FormHelperText>
-                      <ActionGroup hidden={checked !== 'custom'}>
-                        <Button variant="plain" type={ButtonType.submit} onClick={onCustomConfigSubmit}>
-                          <CheckIcon />
-                        </Button>
-                        <Button variant="plain" type={ButtonType.reset} onClick={() => setIsOpen(false)}>
-                          <TimesIcon />
-                        </Button>
-                      </ActionGroup>
-                    </DropdownItem>
+                            <TimesIcon />
+                          </Button>
+                        </div>
+                      </DropdownItem>
+                    </FormGroup>
                   </Form>
                 </DropdownList>
               </DropdownGroup>
@@ -155,7 +183,6 @@ const Controls = () => {
       <ToolbarItem>
         <Button
           onClick={() => {
-            toggleLocked((prev) => !prev);
             toggleOpen((prev) => !prev);
             setPrevLayout(layout);
           }}
